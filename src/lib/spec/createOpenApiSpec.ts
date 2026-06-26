@@ -1,5 +1,5 @@
 import type { OpenAPIV3 } from '@scalar/openapi-types'
-import type { OpenAPIDocument, ParsedOpenAPI, ParsedPaths } from '../../types'
+import type { OpenAPIDocument, ParsedOpenAPI, ParsedPaths, ParsedWebhook } from '../../types'
 import { httpVerbs } from '../../index'
 
 export interface OpenApiSpecInstance {
@@ -14,7 +14,9 @@ export interface OpenApiSpecInstance {
   getOperationMethod: (operationId: string) => string | null
   getOperationParameters: (operationId: string) => any[]
   getPaths: () => ParsedPaths
+  getWebhooks: () => ParsedWebhook
   getPathsByVerbs: () => any[]
+  getWebhooksByVerbs: () => any[]
   getInfo: () => any
   getExternalDocs: () => any
   getServers: () => any[]
@@ -67,7 +69,7 @@ export function createOpenApiSpec(options: {
   }
 
   function getOperation(operationId: string) {
-    const paths = getSpec().paths as OpenAPIV3.PathsObject
+    const paths = { ...getSpec().paths, ...getSpec().webhooks } as OpenAPIV3.PathsObject
     if (!paths) {
       return null
     }
@@ -75,7 +77,7 @@ export function createOpenApiSpec(options: {
   }
 
   function getOperationPath(operationId: string) {
-    const paths = getSpec().paths as OpenAPIV3.PathsObject
+    const paths = { ...getSpec().paths, ...getSpec().webhooks } as OpenAPIV3.PathsObject
     if (!paths) {
       return null
     }
@@ -90,7 +92,7 @@ export function createOpenApiSpec(options: {
   }
 
   function getOperationMethod(operationId: string) {
-    const paths = getSpec().paths as OpenAPIV3.PathsObject
+    const paths = { ...getSpec().paths, ...getSpec().webhooks } as OpenAPIV3.PathsObject
     if (!paths) {
       return null
     }
@@ -116,6 +118,10 @@ export function createOpenApiSpec(options: {
     return (getSpec().paths ?? {}) as ParsedPaths
   }
 
+  function getWebhooks(): ParsedWebhook {
+    return (getSpec().webhooks ?? {}) as ParsedWebhook
+  }
+
   function getPathsByVerbs() {
     const paths = getPaths()
     return Object.keys(paths)
@@ -136,6 +142,28 @@ export function createOpenApiSpec(options: {
             }
           })
       })
+  }
+
+  function getWebhooksByVerbs() {
+    const webhooks = getPaths()
+    return Object.keys(webhooks)
+      .flatMap((webhook: string) => httpVerbs
+        .filter((verb: string) => webhooks && webhooks[webhook] && webhooks[webhook][verb])
+        .map((verb: string) => {
+          if (!webhooks || !webhooks[webhook] || !webhooks[webhook][verb]) {
+            return null
+          }
+          const { operationId, summary, tags } = webhooks[webhook][verb]
+
+          return ({
+            webhook,
+            verb,
+            operationId,
+            summary,
+            tags: tags ?? [],
+          })
+        }),
+      )
   }
 
   function getInfo() {
@@ -169,10 +197,10 @@ export function createOpenApiSpec(options: {
   }
 
   function getOperationsTags(): string[] {
-    if (!getSpec().paths) {
+    if (!getSpec().paths || !getSpec().webhooks) {
       return []
     }
-    const paths = getSpec().paths as OpenAPIV3.PathsObject
+    const paths = { ...getSpec().paths, ...getSpec().webhooks } as OpenAPIV3.PathsObject
     return Object.values(paths).reduce((tags: string[], path) => {
       for (const verb of httpVerbs) {
         if (path && path[verb]?.tags) {
@@ -258,5 +286,7 @@ export function createOpenApiSpec(options: {
     getPathsWithoutTags,
     getTags,
     getFilteredTags,
+    getWebhooksByVerbs,
+    getWebhooks,
   }
 }

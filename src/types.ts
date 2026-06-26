@@ -30,6 +30,8 @@ export type ParsedPaths = OpenAPIV3.PathsObject & OpenAPIV3_1.PathsObject & {
   }
 }
 
+export type ParsedWebhook = ParsedPaths
+
 export type ParsedOpenAPI = OpenAPIDocument & {
   paths: ParsedPaths
 }

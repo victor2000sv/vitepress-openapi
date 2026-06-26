@@ -1,4 +1,5 @@
 import OAVueJsonPretty from './Common/Highlight/OAVueJsonPretty.vue'
+import OACodeBlock from './Common/OACodeBlock.vue'
 import OAFooter from './Common/OAFooter.vue'
 import OAHeaderBadges from './Common/OAHeaderBadges.vue'
 import OAHeading from './Common/OAHeading.vue'
@@ -16,6 +17,7 @@ import OAOperationTags from './Operation/OAOperationTags.vue'
 import OAParameter from './Parameter/OAParameter.vue'
 import OAParameters from './Parameter/OAParameters.vue'
 import OAPathEndpoint from './Path/OAPathEndpoint.vue'
+import OAPaths from './Path/OAPaths.vue'
 import OAPlayground from './Playground/OAPlayground.vue'
 import OARequestBody from './Request/OARequestBody.vue'
 import OAResponses from './Response/OAResponses.vue'
@@ -23,6 +25,7 @@ import OACodeSamples from './Sample/OACodeSamples.vue'
 import OASecurity from './Security/OASecurity.vue'
 
 export {
+  OACodeBlock,
   OACodeSamples,
   OAFooter,
   OAHeaderBadges,
@@ -38,6 +41,7 @@ export {
   OAParameter,
   OAParameters,
   OAPathEndpoint,
+  OAPaths,
   OAPlayground,
   OARequestBody,
   OAResponses,

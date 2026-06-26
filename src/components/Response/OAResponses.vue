@@ -21,6 +21,18 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  headingLevel: {
+    type: String,
+    default: 'h2',
+  },
+  titleOverride: {
+    type: String,
+    default: null,
+  },
+  excludeBorder: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const themeConfig = useTheme()
@@ -48,14 +60,14 @@ const tabsSelector = computed(() => {
     <Tabs
       :default-value="vModel"
     >
-      <div class="mt-[48px] mb-[16px] pt-[24px] border-t-[1px] border-(--vp-c-divider) flex flex-wrap flex-row items-center justify-between gap-y-[16px]">
+      <div class="mb-[16px] mt-[48px] flex flex-wrap flex-row items-center justify-between gap-y-[16px]" :class="{ 'pt-[24px] border-t-[1px] border-(--vp-c-divider)': !props.excludeBorder }">
         <OAHeading
-          level="h2"
+          :level="props.headingLevel"
           :prefix="headingPrefix"
           class="text-[color:var(--vp-c-text-1)] my-0! py-0! border-t-0! inline-block"
           header-anchor-class="top-0!"
         >
-          {{ t('Responses') }}
+          {{ props.titleOverride ?? t('Responses') }}
         </OAHeading>
         <div
           :class="{

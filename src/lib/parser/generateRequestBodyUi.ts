@@ -4,19 +4,26 @@ import { getSchemaExample } from '../examples/getSchemaExample'
 import { getSchemaUi } from './getSchemaUi'
 
 export function generateRequestBodyUi(spec: ParsedOpenAPI): ParsedOpenAPI {
-  if (!spec.paths) {
-    return spec
+  if (spec.paths) {
+    processPathItems(spec.paths)
   }
 
-  for (const path of Object.values(spec.paths)) {
+  if (spec.webhooks) {
+    processPathItems(spec.webhooks)
+  }
+
+  return spec
+}
+
+function processPathItems(pathItems: Record<string, any>): void {
+  for (const path of Object.values(pathItems)) {
+    if (!path) {
+      continue
+    }
     for (const verb of httpVerbs) {
       const operation = (path as Record<string, any>)[verb] as ParsedOperation
 
-      if (!operation) {
-        continue
-      }
-
-      if (!operation.requestBody) {
+      if (!operation || !operation.requestBody) {
         continue
       }
 
@@ -35,6 +42,4 @@ export function generateRequestBodyUi(spec: ParsedOpenAPI): ParsedOpenAPI {
       }
     }
   }
-
-  return spec
 }

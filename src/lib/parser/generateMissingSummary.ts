@@ -2,23 +2,24 @@ import type { OpenAPIDocument, OperationObject } from '../../types'
 import { httpVerbs } from '../../index'
 
 export function generateMissingSummary(spec: OpenAPIDocument): OpenAPIDocument {
-  spec.paths = spec.paths || {}
+  ['paths', 'webhooks'].forEach((operationType: string) => {
+    spec[operationType] = spec[operationType] || {}
 
-  for (const path of Object.keys(spec.paths)) {
-    const pathValue = spec.paths[path] as Record<string, OperationObject>
+    for (const operation of Object.keys(spec[operationType])) {
+      const operationValue = spec[operationType][operation] as Record<string, OperationObject>
 
-    for (const verb of httpVerbs) {
-      const operation = pathValue[verb] as OperationObject
+      for (const verb of httpVerbs) {
+        const verbOperation = operationValue[verb]
+        if (!verbOperation) {
+          continue
+        }
 
-      if (!operation) {
-        continue
-      }
-
-      if (!operation.summary) {
-        operation.summary = `${verb.toUpperCase()} ${path}`
+        if (!verbOperation.summary) {
+          verbOperation.summary = `${verb.toUpperCase()} ${operation}`
+        }
       }
     }
-  }
+  })
 
   return spec
 }

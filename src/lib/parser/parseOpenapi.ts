@@ -38,7 +38,7 @@ export function parseOpenapi() {
       return {}
     }
 
-    if (specContent?.paths) {
+    if (specContent?.paths || specContent?.webhooks) {
       specContent = generateMissingOperationIds(specContent)
       specContent = generateMissingSummary(specContent)
       specContent = generateMissingTags({ spec: specContent, defaultTag, defaultTagDescription })

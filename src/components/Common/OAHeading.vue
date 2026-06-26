@@ -25,6 +25,10 @@ const props = defineProps({
     type: String,
     default: 'header-anchor',
   },
+  includeAnchor: {
+    type: Boolean,
+    required: false,
+  },
 })
 
 function getSlotChildrenText(children) {
@@ -68,7 +72,7 @@ const hLevel = computed(() => {
 
 <template>
   <component
-    :is="hLevel"
+    :is="hLevel || (props.includeAnchor ?? false)"
     :id="id"
     tabindex="-1"
     :class="cn(props.class)"

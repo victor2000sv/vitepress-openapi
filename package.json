@@ -52,7 +52,8 @@
     "e2e:local:dev": "cd e2e/local/dev && vitepress dev docs --port 4173",
     "e2e:local:test": "playwright test local",
     "e2e:update-snapshots": "node scripts/update-snapshots.js",
-    "e2e:staging:test": "playwright test staging"
+    "e2e:staging:test": "playwright test staging",
+    "clean": "rm -rf .github && rm -rf docs && rm -rf e2e && rm -rf scripts && rm -rf test && rm eslint.config.js && rm playwright.config.ts && rm tailwind.config.mjs && rm vite.config.ts && rm vitest.config.ts"
   },
   "peerDependencies": {
     "vitepress": ">=1.0.0",
